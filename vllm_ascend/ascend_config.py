@@ -74,6 +74,13 @@ class AscendConfig:
             "recompute_scheduler_enable", False)
         self.lmhead_tensor_parallel_size = additional_config.get(
             "lmhead_tensor_parallel_size", None)
+        if self.enable_shared_expert_dp:
+            from vllm_ascend.utils import enable_sp
+            if not enable_sp(vllm_config):
+                self.enable_shared_expert_dp = False
+                logger.info(
+                    f"enable_shared_expert_dp is {self.enable_shared_expert_dp}"
+                    "Enable enable_shared_expert_dp must enable sp")
         if self.lmhead_tensor_parallel_size is not None:
             logger.info(
                 f"Enable lmhead_tensor_parallel_size={self.lmhead_tensor_parallel_size} in pure DP scenario"
